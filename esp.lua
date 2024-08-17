@@ -130,7 +130,7 @@ local function getClosestVisibleEnemyPlayer()
     return closestPlayer
 end
 
--- Function to rotate the player's character to face the target
+-- Function to rotate the player's character to face the target smoothly
 local function aimAtPlayerThirdPerson(player)
     if player and player.Character and player.Character:FindFirstChild("Head") then
         local localPlayer = game.Players.LocalPlayer
@@ -143,8 +143,9 @@ local function aimAtPlayerThirdPerson(player)
             -- Calculate the direction vector from the character to the target
             local direction = (targetPosition - humanoidRootPart.Position).Unit
 
-            -- Set the character's CFrame to face the target
-            humanoidRootPart.CFrame = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + Vector3.new(direction.X, 0, direction.Z))
+            -- Smoothly rotate the character towards the target
+            local lookAt = CFrame.new(humanoidRootPart.Position, humanoidRootPart.Position + Vector3.new(direction.X, 0, direction.Z))
+            humanoidRootPart.CFrame = humanoidRootPart.CFrame:Lerp(lookAt, 0.1)  -- Smoothly rotate the character
         end
     end
 end
@@ -202,6 +203,6 @@ end)
 -- Run the aimbot during each frame
 runService.RenderStepped:Connect(function()
     if aimbotEnabled and rightMouseButtonDown and currentTarget then
-        aimAtPlayerThirdPerson(currentTarget)  -- Rotate the character towards the locked target in third-person
+        aimAtPlayerThirdPerson(currentTarget)  -- Smoothly rotate the character towards the locked target in third-person
     end
 end)
