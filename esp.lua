@@ -110,13 +110,15 @@ local function isTargetVisible(player)
     return false
 end
 
--- Function to get the closest visible player
-local function getClosestVisiblePlayer()
+-- Function to get the closest visible player on the enemy team
+local function getClosestVisibleEnemyPlayer()
     local closestPlayer = nil
     local closestDistance = math.huge
+    local localPlayer = game.Players.LocalPlayer
 
     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game:GetService("Players").LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        -- Check if the player is not the local player, is on a different team, and is visible
+        if player ~= localPlayer and player.Team ~= localPlayer.Team and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
             local distance = (player.Character.HumanoidRootPart.Position - workspace.CurrentCamera.CFrame.Position).Magnitude
             if distance < closestDistance and isTargetVisible(player) then
                 closestDistance = distance
@@ -174,7 +176,7 @@ userInputService.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton2 then
         rightMouseButtonDown = true
         if not currentTarget then
-            currentTarget = getClosestVisiblePlayer()  -- Lock on to the closest visible player when RMB is first pressed
+            currentTarget = getClosestVisibleEnemyPlayer()  -- Lock on to the closest visible enemy when RMB is first pressed
         end
     end
 end)
